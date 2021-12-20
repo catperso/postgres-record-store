@@ -23,8 +23,7 @@ get('/albums/new') do
 end
 
 post('/albums/sort') do
-  Album.sort
-  @albums = Album.all
+  @albums = Album.sort
   erb(:albums)
 end
 

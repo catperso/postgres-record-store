@@ -69,13 +69,16 @@ class Album
   #   sold_array
   # end
 
-  # def self.sort
-  #   array = @@albums.values.sort_by! &:name
-  #   @@albums = {}
-  #   array.each do |element|
-  #     @@albums[element.id] = element
-  #   end
-  # end
+  def self.sort
+    returned_albums = DB.exec("SELECT * FROM albums ORDER BY name;")
+    albums = []
+    returned_albums.each() do |album|
+      id = album.fetch("id").to_i
+      name = album.fetch("name")
+      albums.push(Album.new({name: name, id: id}))
+    end
+    albums
+  end
 
   def songs
     Song.find_by_album(self.id)
