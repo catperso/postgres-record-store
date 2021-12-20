@@ -45,36 +45,37 @@ class Album
 
   def delete
     DB.exec("DELETE FROM albums WHERE id = #{@id};")
-  end
-  
-  def self.search(word_searched)
-    new_array = []
-    @@albums.values.each do |album|
-      if album.name == word_searched || album.genre == word_searched || album.year == word_searched || album.artist == word_searched
-        new_array.push(album)
-      end
-    end
-    new_array
+    DB.exec("DELETE FROM songs WHERE album_id = #{@id};")
   end
 
-  def self.sold(name_searched)
-    sold_array = []
-    @@albums.values.each do |album|
-      if album.name == name_searched
-        album.sold = true
-        sold_array.push(album)
-      end
-    end
-    sold_array
-  end
+  # def self.search(word_searched)
+  #   new_array = []
+  #   @@albums.values.each do |album|
+  #     if album.name == word_searched || album.genre == word_searched || album.year == word_searched || album.artist == word_searched
+  #       new_array.push(album)
+  #     end
+  #   end
+  #   new_array
+  # end
 
-  def self.sort
-    array = @@albums.values.sort_by! &:name
-    @@albums = {}
-    array.each do |element|
-      @@albums[element.id] = element
-    end
-  end
+  # def self.sold(name_searched)
+  #   sold_array = []
+  #   @@albums.values.each do |album|
+  #     if album.name == name_searched
+  #       album.sold = true
+  #       sold_array.push(album)
+  #     end
+  #   end
+  #   sold_array
+  # end
+
+  # def self.sort
+  #   array = @@albums.values.sort_by! &:name
+  #   @@albums = {}
+  #   array.each do |element|
+  #     @@albums[element.id] = element
+  #   end
+  # end
 
   def songs
     Song.find_by_album(self.id)
