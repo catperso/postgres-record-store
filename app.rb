@@ -43,8 +43,9 @@ get('/albums/:id') do
   erb(:album)
 end
 
-get('/albums/random/:id') do
-  id = Album.find(params[:id].to_i)
+get('/albums/random') do
+  # id = Album.get_random
+  @album = Album.get_random
   erb(:album)  
 end
 

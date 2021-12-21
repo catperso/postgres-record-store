@@ -5,8 +5,8 @@ class Album
   def initialize(attributes)
     @name = attributes[:name]
     @id = attributes[:id]
-    @year = attributes[:year]
-    @price = attributes[:price]
+    @year = attributes[:year] || 0
+    @price = attributes[:price] || 0
   end
 
   def self.all
@@ -46,8 +46,8 @@ class Album
   
   def update(name, year, price)
     @name = name
-    @year = year
-    @price = price
+    @year = year || 0
+    @price = price || 0
     DB.exec("UPDATE albums SET name = '#{@name}' WHERE id = #{@id};")
     DB.exec("UPDATE albums SET year = '#{@year}' WHERE id = #{@id};")
     DB.exec("UPDATE albums SET price = '#{@price}' WHERE id = #{@id};")
@@ -109,9 +109,16 @@ class Album
   def get_random
     ids = DB.exec("SELECT id FROM albums;")
     random = rand(ids.length)
-    random_id = ids[random]
-    random_id
+    random_id = ids[random].to_i
+    random_album = DB.exec("SELECT * FROM albums WHERE id = #{random_id};").first
+    name = random_album.fetch("name")
+    id = random_album.fetch("id").to_i
+    year = random_album.fetch("year").to_i
+    price = random_album.fetch("price").to_i
+    Album.new({:name => name, :id => id, year: year, price: price})
   end
+
+
 
   
 end
