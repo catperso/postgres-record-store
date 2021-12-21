@@ -1,10 +1,12 @@
 class Album
-  attr_accessor :id, :name
+  attr_accessor :id, :name, :year, :price
 
 
   def initialize(attributes)
     @name = attributes[:name]
     @id = attributes[:id]
+    @year = attributes[:year]
+    @price = attributes[:price]
   end
 
   def self.all
@@ -13,7 +15,9 @@ class Album
     returned_albums.each() do |album|
       name = album.fetch("name")
       id = album.fetch("id").to_i
-      albums.push(Album.new({name: name, id: id}))
+      year = album.fetch("year").to_i
+      price = album.fetch("price").to_i
+      albums.push(Album.new({name: name, id: id, year: year, price: price}))
     end
     albums
   end
@@ -22,11 +26,13 @@ class Album
     album = DB.exec("SELECT * FROM albums WHERE id = #{id};").first
     name = album.fetch("name")
     id = album.fetch("id").to_i
-    Album.new({:name => name, :id => id})
+    year = album.fetch("year").to_i
+    price = album.fetch("price").to_i
+    Album.new({:name => name, :id => id, year: year, price: price})
   end
 
   def save
-    result = DB.exec("INSERT INTO albums (name) VALUES ('#{@name}') RETURNING id;")
+    result = DB.exec("INSERT INTO albums (name, year, price) VALUES ('#{@name}', '#{@year}', '#{@price}') RETURNING id;")
     @id = result.first().fetch("id").to_i
   end
 
@@ -38,9 +44,13 @@ class Album
     DB.exec("DELETE FROM albums *;")
   end
   
-  def update(name)
+  def update(name, year, price)
     @name = name
+    @year = year
+    @price = price
     DB.exec("UPDATE albums SET name = '#{@name}' WHERE id = #{@id};")
+    DB.exec("UPDATE albums SET year = '#{@year}' WHERE id = #{@id};")
+    DB.exec("UPDATE albums SET price = '#{@price}' WHERE id = #{@id};")
   end
 
   def delete
@@ -69,13 +79,25 @@ class Album
   #   sold_array
   # end
 
-  def self.sort
-    returned_albums = DB.exec("SELECT * FROM albums ORDER BY name;")
+  def self.sort(sort_by)
+    order = ""
+    if sort_by == "name"
+      order = "ASC"
+    end
+    if sort_by == "year"
+      order = "DESC"
+    end
+    if sort_by == "price"
+      order = "ASC"
+    end
+    returned_albums = DB.exec("SELECT * FROM albums ORDER BY #{sort_by} #{order};")
     albums = []
     returned_albums.each() do |album|
       id = album.fetch("id").to_i
       name = album.fetch("name")
-      albums.push(Album.new({name: name, id: id}))
+      price = album.fetch("price")
+      year = album.fetch("year")
+      albums.push(Album.new({name: name, year: year, price: price, id: id}))
     end
     albums
   end
@@ -83,5 +105,13 @@ class Album
   def songs
     Song.find_by_album(self.id)
   end
+
+  def get_random
+    ids = DB.exec("SELECT id FROM albums;")
+    random = rand(ids.length)
+    random_id = ids[random]
+    random_id
+  end
+
   
 end

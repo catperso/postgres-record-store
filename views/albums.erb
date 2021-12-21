@@ -1,9 +1,7 @@
-<h1>All Sales Vinyl</h1>
-
 <h3>Available Records</h3>
 <% if @albums.any? %>
   <ul> <% @albums.each do |album| %>      
-    <li><a href="/albums/<%= album.id %>"><%= album.name %></a> </li>
+    <li>&ETH;<%= album.price %> - <a href="/albums/<%= album.id %>"><strong><%= album.name %></strong></a> - <em><%= album.year %></em> </li>
   <% end %>
   </ul>
 <% else %>
@@ -14,5 +12,15 @@
 <br>
 
 <form action="/albums/sort" method="post">
-<button type="submit" class="btn-success">Sort Alphabetically</button>
+<label>Sort by:</label>
+<select name="sort_by">
+    <option value="name">alphabetically</option>
+    <option value="year">by year</option>
+    <option value="price">by price</option>
+</select>
+<button type="submit" class="btn-success">Sort</button>
 </form> 
+
+<form action="/albums/random" method="get">
+<button type="submit" value="<%= 3 %>" class="btn btn-danger">Get Random Album</button>
+</form>

@@ -23,13 +23,16 @@ get('/albums/new') do
 end
 
 post('/albums/sort') do
-  @albums = Album.sort
+  sort_by = params[:sort_by]
+  @albums = Album.sort(sort_by)
   erb(:albums)
 end
 
 post('/albums') do
   name = params[:album_name]
-  album = Album.new(name: name)
+  year = params[:year].to_i
+  price = params[:price].to_i
+  album = Album.new(name: name, year: year, price: price)
   album.save()
   @albums = Album.all
   erb(:albums)
@@ -40,6 +43,11 @@ get('/albums/:id') do
   erb(:album)
 end
 
+get('/albums/random/:id') do
+  id = Album.find(params[:id].to_i)
+  erb(:album)  
+end
+
 get('/albums/:id/edit') do
   @album = Album.find(params[:id].to_i())
   erb(:edit_album)
@@ -47,7 +55,7 @@ end
 
 patch('/albums/:id') do
   @album = Album.find(params[:id].to_i())
-  @album.update(params[:name])
+  @album.update(params[:name], params[:year].to_i, params[:price])
   @albums = Album.all
   erb(:albums)
 end

@@ -4,7 +4,11 @@
   <input name="_method" type="hidden" value="patch">
 
   <label for="name">Rename album</label>
-  <input id="name" name="name" type="text">
+  <input id="name" name="name" type="text" value="<%= @album.name() %>">
+  <label for="year">Set year</label>
+  <input id="year" name="year" type="text"value="<%= @album.year() %>">
+  <label for="price">Set price</label>
+  <input id="price" name="price" type="text"value="<%= @album.price() %>">
 
   <button type="submit">Update</button>
 </form>
